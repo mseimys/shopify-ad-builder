@@ -20,7 +20,7 @@ const GET_PRODUCTS_BY_ID = gql`
           edges {
             node {
               id
-              url(transform: { maxHeight: 100 })
+              url
               altText
             }
           }
@@ -50,15 +50,5 @@ export function AdBuilder({ productId }) {
     );
   }
 
-  return (
-    <Page>
-      <Layout>
-        <Layout.Section>
-          <Card>
-            <ProductsList data={data} />
-          </Card>
-        </Layout.Section>
-      </Layout>
-    </Page>
-  );
+  return <ProductsList data={data} />;
 }

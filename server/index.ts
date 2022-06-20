@@ -8,6 +8,8 @@ import "dotenv/config";
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 
+import { createAd } from "./designify.js";
+
 const USE_ONLINE_TOKENS = true;
 const TOP_LEVEL_OAUTH_COOKIE = "shopify_top_level_oauth";
 
@@ -61,13 +63,17 @@ export async function createServer(
     }
   });
 
-  app.post("/generate-ad", verifyRequest(app), async (req, res) => {
-    console.warn("GENERATING AD", req.body);
-    res.status(200).send({
-      success: true,
-      url: "https://nerdist.com/wp-content/uploads/2020/07/maxresdefault.jpg",
-    });
-  });
+  app.post(
+    "/create-ad",
+    express.json({ type: "*/*" }),
+    verifyRequest(app),
+    async (req, res) => {
+      console.log(req.body);
+      const response = await createAd(req.body);
+
+      res.status(200).send(response);
+    }
+  );
 
   app.get("/products-count", verifyRequest(app), async (req, res) => {
     const session = await Shopify.Utils.loadCurrentSession(req, res, true);

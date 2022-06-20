@@ -19,7 +19,7 @@ function Routes(props) {
       <Route path="/creatives" component={TBD} />
       <Route path="/audiences" component={TBD} />
       <Route path="/product-ad" component={BuildProductAd} />
-      <Route path="/" component={Home} />
+      <Route path="/" component={BuildProductAd} />
     </Switch>
   );
 }

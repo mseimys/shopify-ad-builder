@@ -1,53 +1,46 @@
-import { ResourceList, TextStyle, Stack, Thumbnail } from "@shopify/polaris";
+import { TextStyle, Grid, Stack, Heading } from "@shopify/polaris";
+
+import { Image } from "./Image";
 
 export function ProductsList({ data }: any) {
-  return (
-    <ResourceList
-      resourceName={{ singular: "Product", plural: "Products" }}
-      items={data.nodes}
-      renderItem={(item: any) => {
-        const headerImage =
-          item.images.edges.length > 0 ? item.images.edges[0].node.url : "";
-        const headerImageAltText =
-          item.images.edges.length > 0 ? item.images.edges[0].node.altText : "";
+  const products = data.nodes;
+  return products.map((item: any) => {
+    const headerImage =
+      item.images.edges.length > 0 ? item.images.edges[0].node.url : "";
+    const otherImages =
+      item.images.edges.length > 1 ? item.images.edges.slice(1) : [];
 
-        const otherImages =
-          item.images.edges.length > 1 ? item.images.edges.slice(1) : [];
-        const media = (
-          <Thumbnail
-            source={headerImage}
-            alt={headerImageAltText}
-            size="large"
-          />
-        );
-        const price = item.variants.edges[0].node.price;
+    // const price = item.variants.edges[0].node.price;
+    const productId = item.id;
 
-        return (
-          <ResourceList.Item
-            id={item.id}
-            media={media}
-            accessibilityLabel={`View details for ${item.title}`}
-            onClick={() => {
-              //store.set("item", item);
-              console.log("CLICK", item);
-            }}
-          >
-            <Stack>
-              <Stack.Item fill>
-                <h3>
-                  <TextStyle variation="strong">{item.title}</TextStyle>
-                  <p>${price}</p>
-                </h3>
-              </Stack.Item>
-              {otherImages.map((image) => (
-                <Stack.Item key={image.node.url}>
-                  <Thumbnail source={image.node.url} alt={image.node.altText} />
-                </Stack.Item>
-              ))}
-            </Stack>
-          </ResourceList.Item>
-        );
-      }}
-    />
-  );
+    return (
+      <div key={item.id}>
+        <Stack>
+          <Stack.Item>
+            <Heading>{item.title}</Heading>
+            <TextStyle variation="strong">Main image</TextStyle>
+            <Image productId={productId} url={headerImage} size="large" />
+          </Stack.Item>
+        </Stack>
+        <br />
+        <br />
+        <Grid>
+          {otherImages.map((image) => (
+            <Grid.Cell
+              key={image.node.url}
+              columnSpan={{
+                xs: 2,
+                sm: 2,
+                md: 2,
+                lg: 4,
+                xl: 4,
+              }}
+            >
+              <Image productId={productId} url={image.node.url} size="large" />
+            </Grid.Cell>
+          ))}
+        </Grid>
+      </div>
+    );
+  });
 }

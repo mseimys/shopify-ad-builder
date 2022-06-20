@@ -8,10 +8,8 @@ import { AdBuilder } from "./AdBuilder";
 import { Menu } from "./Menu";
 
 export function BuildProductAd() {
-  const [resultUrl, setResultUrl] = useState("");
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [productId, setProductId] = useState("");
-  const app = useAppBridge();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -25,26 +23,9 @@ export function BuildProductAd() {
     setIsSelectOpen(false);
   };
 
-  const handleBuildAd = async () => {
-    const token = await getSessionToken(app);
-
-    const response = await fetch("/generate-ad", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-    }).then((res) => res.json());
-    setResultUrl(response.url);
-  };
-
   return (
     <Page fullWidth>
       <Menu />
-      {resultUrl && (
-        <Modal title="Result" open onClose={() => setResultUrl("")}>
-          <Modal.Section>
-            <img src={resultUrl} width="500" />
-          </Modal.Section>
-        </Modal>
-      )}
       <ResourcePicker
         resourceType="Product"
         allowMultiple={false}
@@ -56,14 +37,6 @@ export function BuildProductAd() {
       <Card
         title="Build Product Ad"
         sectioned
-        primaryFooterAction={
-          productId
-            ? {
-                content: "Build Ad",
-                onAction: handleBuildAd,
-              }
-            : undefined
-        }
         secondaryFooterActions={
           productId
             ? [
@@ -78,10 +51,7 @@ export function BuildProductAd() {
         }
       >
         {productId ? (
-          <>
-            <p>Create Ad for {productId}</p>
-            <AdBuilder productId={productId} />
-          </>
+          <AdBuilder productId={productId} />
         ) : (
           <Button onClick={() => setIsSelectOpen(true)}>Select Product</Button>
         )}
